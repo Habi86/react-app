@@ -13,10 +13,12 @@ import "./index.css";
 
 // wire up dependencies
 const githubAPI = new GithubAPI({ 
-  userToken: "e1ee0744f87186125f468ea4ade77674cb7979cd"
+  userToken: "724ed5f1b04e5bf4a5fc9359cba348bfba226e12"
 });
+
+//Stores:
 const sessionStore = new SessionStore({ githubAPI });
-const viewStore = new ViewStore();
+const viewStore = new ViewStore(); //Regelt welchen Screen man sich anschaut
 const repoStore = new RepoStore({ githubAPI, sessionStore });
 const issueStore = new IssueStore({ githubAPI, sessionStore });
 
