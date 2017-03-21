@@ -2,6 +2,20 @@ import React from "react";
 import SessionButton from "./sessionButton";
 import { observer, inject } from "mobx-react";
 import { Button } from "@blueprintjs/core";
+//
+// const AuthenticatedAboutButton = authenticated(
+//     inject("viewStore")(
+//         observer(({viewStore}) => {
+//             return (
+//                 <Button
+//                     className="pt-button pt-minimal pt-icon-document"
+//                     onClick={() => viewStore.push(viewStore.routes.about())}
+//                     text="about"
+//                 />
+//             );
+//         })
+//     )
+// );
 
 export default inject("viewStore")(
   observer(function({ viewStore }) {
