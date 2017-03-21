@@ -36,8 +36,14 @@ export default inject("repoStore", "sessionStore")(
             }
             case FULFILLED: {
               const repos = repoDeferred.value;
-              // TODO: implement list of repos
-              break;
+              // TODO: implement list of repos - check
+              const repoItems = repos.map((e) => <li key={e.name}>{e.name}</li>)
+                return (
+                    <div>
+                        {repoItems}
+                    </div>
+                );
+                break;
             }
             default: {
               console.error("deferred state not supported", state);
