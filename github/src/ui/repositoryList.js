@@ -2,15 +2,20 @@ import React from "react";
 import { observer, inject } from "mobx-react";
 import { PENDING, REJECTED, FULFILLED } from "mobx-utils";
 import { Spinner, Button } from "@blueprintjs/core";
-export default inject("repoStore", "sessionStore")(
+
+function handleClick(){
+    console.log('The link was clicked.');
+}
+
+export default inject("repoStore", "sessionStore", "viewStore")(
   observer(
     class RepositoryList extends React.Component {
-      constructor({ repoStore, sessionStore }) {
+      constructor({ repoStore, sessionStore, viewStore }) {
         super();
         repoStore.fetchRepos();
       }
       renderRepoList() {
-        const {sessionStore, repoStore} = this.props;
+        const {sessionStore, repoStore, viewStore} = this.props;
 
         if (sessionStore.authenticated) {
           const repoDeferred = repoStore.repoDeferred;
@@ -37,7 +42,7 @@ export default inject("repoStore", "sessionStore")(
             case FULFILLED: {
               const repos = repoDeferred.value;
               // TODO: implement list of repos - check
-              const repoItems = repos.map((e) => <li key={e.name}>{e.name}</li>)
+              const repoItems = repos.map((e) => <li key={e.id}>{e.name}<button onClick={() => viewStore.push(viewStore.routes.issue({repo: e.name}))}>Show Issues</button></li>)
                 return (
                     <div>
                         {repoItems}
