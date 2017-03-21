@@ -78,28 +78,35 @@ const FormComponent = inject("form")(
   })
 );
 
-export default inject("issueStore")(
-  observer(
-    class IssueFormComponent extends React.Component {
-      constructor({ issueStore, route }) {
-        super();
-        this.state = {
-          form: new IssueForm({ fields }, { plugins }, issueStore, route.params.repo)
-        };
-      }
-      render() {
-        const { form } = this.state;
-        const {route} = this.props;
 
-        return (
-          <Provider form={form}>
-            <div>
-            <h3>issue for {route.params.repo}</h3>
-            <FormComponent />
-            </div>
-          </Provider>
-        );
-      }
-    }
-  )
+export default inject("issueStore")(
+    observer(
+        class IssueFormComponent extends React.Component {
+            constructor({ issueStore, route }) {
+                super();
+
+                const values = {
+                    title: 'example',
+                    text: 'asdf'
+                }
+
+                this.state = {
+                    form: new IssueForm({ fields, values }, { plugins }, issueStore, route.params.repo)
+                };
+            }
+            render() {
+                const { form } = this.state;
+                const {route} = this.props;
+
+                return (
+                    <Provider form={form}>
+                        <div>
+                            <h3>issue for {route.params.repo}</h3>
+                            <FormComponent />
+                        </div>
+                    </Provider>
+                );
+            }
+        }
+    )
 );
