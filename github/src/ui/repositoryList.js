@@ -3,10 +3,6 @@ import { observer, inject } from "mobx-react";
 import { PENDING, REJECTED, FULFILLED } from "mobx-utils";
 import { Spinner, Button } from "@blueprintjs/core";
 
-function handleClick(){
-    console.log('The link was clicked.');
-}
-
 export default inject("repoStore", "sessionStore", "viewStore")(
   observer(
     class RepositoryList extends React.Component {
@@ -19,6 +15,7 @@ export default inject("repoStore", "sessionStore", "viewStore")(
 
         if (sessionStore.authenticated) {
           const repoDeferred = repoStore.repoDeferred;
+
           const state = repoDeferred.state;
           switch (state) {
             case PENDING: {
@@ -27,9 +24,7 @@ export default inject("repoStore", "sessionStore", "viewStore")(
             case REJECTED: {
               return (
                 <div className="pt-non-ideal-state">
-                  <div
-                    className="pt-non-ideal-state-visual pt-non-ideal-state-icon"
-                  >
+                  <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
                     <span className="pt-icon pt-icon-error" />
                   </div> 
                   <h4 className="pt-non-ideal-state-title">Error occured</h4>
@@ -41,8 +36,8 @@ export default inject("repoStore", "sessionStore", "viewStore")(
             }
             case FULFILLED: {
               const repos = repoDeferred.value;
-              // TODO: implement list of repos - check
-              const repoItems = repos.map((e) => <li key={e.id}>{e.name}<button onClick={() => viewStore.push(viewStore.routes.issue({repo: e.name}))}>Register Issues</button></li>)
+              // TODO: implement list of repos - ✓
+              const repoItems = repos.map((e) => <li key={e.id}>{e.name} <button onClick={() => viewStore.push(viewStore.routes.issue({repo: e.name}))}>write issue</button></li>)
                 return (
                     <div>
                         {repoItems}
@@ -58,7 +53,7 @@ export default inject("repoStore", "sessionStore", "viewStore")(
           return <h1>NOT AUTHENTICATED </h1>;
         }
       }
-      render() {
+        render() {
         return (
           <div>
             <h1>Repos</h1>
