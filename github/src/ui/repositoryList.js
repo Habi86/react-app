@@ -42,7 +42,7 @@ export default inject("repoStore", "sessionStore", "viewStore")(
             case FULFILLED: {
               const repos = repoDeferred.value;
               // TODO: implement list of repos - check
-              const repoItems = repos.map((e) => <li key={e.id}>{e.name}<button onClick={() => viewStore.push(viewStore.routes.issue({repo: e.name}))}>Show Issues</button></li>)
+              const repoItems = repos.map((e) => <li key={e.id}>{e.name}<button onClick={() => viewStore.push(viewStore.routes.issue({repo: e.name}))}>Register Issues</button></li>)
                 return (
                     <div>
                         {repoItems}

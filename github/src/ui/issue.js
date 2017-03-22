@@ -2,10 +2,11 @@ import MobxReactForm from "mobx-react-form";
 import React from "react";
 import { observer, Provider, inject } from "mobx-react";
 import { extendObservable } from "mobx";
-import { fromPromise } from "mobx-utils";
-import { Button, Intent, Toaster, Position } from "@blueprintjs/core";
+import { fromPromise, PENDING, REJECTED, FULFILLED } from "mobx-utils";
+import { Button, Intent, Toaster, Position, Spinner } from "@blueprintjs/core";
 import validatorjs from "validatorjs";
 import FormInput from './formInput';
+
 
 const plugins = { dvr: validatorjs };
 
@@ -79,21 +80,74 @@ const FormComponent = inject("form")(
 );
 
 
-export default inject("issueStore")(
+export default inject("issueStore", "sessionStore")(
     observer(
         class IssueFormComponent extends React.Component {
-            constructor({ issueStore, route }) {
+            constructor({ issueStore, route, sessionStore}) {
                 super();
 
                 const values = {
-                    title: 'example',
-                    text: 'asdf'
+                    title: 'Title',
+                    text: 'Text'
                 }
+
+                issueStore.getIssues(route.params.repo)
 
                 this.state = {
                     form: new IssueForm({ fields, values }, { plugins }, issueStore, route.params.repo)
                 };
             }
+
+            renderIssueList(repo) {
+                const {issueStore, sessionStore} = this.props;
+
+                if (sessionStore.authenticated) {
+                    const issueDeferred = issueStore.issueDeferred;
+                    const state = issueDeferred.state;
+                    switch (state) {
+                        case PENDING: {
+                            return <Spinner />;
+                        }
+                        case REJECTED: {
+                            return (
+                                <div className="pt-non-ideal-state">
+                                    <div className="pt-non-ideal-state-visual pt-non-ideal-state-icon">
+                                        <span className="pt-icon pt-icon-error" />
+                                    </div>
+                                    <h4 className="pt-non-ideal-state-title">Error occured</h4>
+                                    <div className="pt-non-ideal-state-description">
+                                        <Button onClick={issueStore.getIssues} text="retry"/>
+                                    </div>
+                                </div>
+                            );
+                        }
+                        case FULFILLED: {
+                            const issues = issueDeferred.value;
+                            return (
+                                <div>
+                                    <h3>Issues from {repo}</h3>
+                                    {
+                                        issues.map((e) =>
+                                            <div key={e.id}>
+                                                <ul>
+                                                    <li><h5>Title: {e.title} <button>edit</button></h5></li>
+                                                    <p>Description: {e.body}</p>
+                                                </ul>
+                                            </div>
+                                        )
+                                    }
+                                </div>
+                            );
+                        }
+                        default: {
+                            console.error("deferred state not supported", state);
+                        }
+                    }
+                } else {
+                    return <h2>NOT AUTHENTICATED </h2>;
+                }
+            }
+
             render() {
                 const { form } = this.state;
                 const {route} = this.props;
@@ -103,6 +157,7 @@ export default inject("issueStore")(
                         <div>
                             <h3>issue for {route.params.repo}</h3>
                             <FormComponent />
+                            {this.renderIssueList(route.params.repo)}
                         </div>
                     </Provider>
                 );
